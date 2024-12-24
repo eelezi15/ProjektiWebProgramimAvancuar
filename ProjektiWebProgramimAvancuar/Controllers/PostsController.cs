@@ -29,7 +29,7 @@ namespace ProjektiWebProgramimAvancuar.Controllers
           {
               return NotFound();
           }
-            return await _context.Post.ToListAsync();
+            return await _context.Post.Include(p => p.Comments).ToListAsync();
         }
 
         // GET: api/Posts/5
