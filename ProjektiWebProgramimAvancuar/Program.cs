@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ProjektiWebProgramimAvancuar.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ProjektiWebProgramimAvancuarContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjektiWebProgramimAvancuarContext") ?? throw new InvalidOperationException("Connection string 'ProjektiWebProgramimAvancuarContext' not found.")));
 
 // Add services to the container.
 
