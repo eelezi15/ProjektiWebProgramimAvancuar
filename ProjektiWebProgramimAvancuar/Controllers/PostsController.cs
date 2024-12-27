@@ -116,6 +116,25 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             return NoContent();
         }
 
+        [HttpGet("PostsByUser/{id}")]
+
+        public async Task<ActionResult<IEnumerable<Post>>> PostsByUser(Guid id)
+        {
+            if(_context.Post == null)
+            {
+                return Problem("Nuk ekziston");
+            }
+
+            var postbyuser= await  _context.Post.Include(p => p.User).Include(p => p.Comments).Where(p => p.UserId == id).ToListAsync();
+
+            if(postbyuser == null)
+            {
+                return Problem("Not found");
+            }
+            return Ok(postbyuser);
+
+
+        }
         private bool PostExists(Guid id)
         {
             return (_context.Post?.Any(e => e.PostId == id)).GetValueOrDefault();
