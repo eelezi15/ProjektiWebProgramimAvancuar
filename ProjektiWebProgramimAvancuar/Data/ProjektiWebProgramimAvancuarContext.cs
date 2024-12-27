@@ -17,5 +17,7 @@ namespace ProjektiWebProgramimAvancuar.Data
         public DbSet<ProjektiWebProgramimAvancuar.Models.Comment> Comment { get; set; } = default!;
 
         public DbSet<ProjektiWebProgramimAvancuar.Models.Post>? Post { get; set; }
+
+        public DbSet<ProjektiWebProgramimAvancuar.Models.User>? User { get; set; }
     }
 }

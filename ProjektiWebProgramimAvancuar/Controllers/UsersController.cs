@@ -12,55 +12,55 @@ namespace ProjektiWebProgramimAvancuar.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly ProjektiWebProgramimAvancuarContext _context;
 
-        public PostsController(ProjektiWebProgramimAvancuarContext context)
+        public UsersController(ProjektiWebProgramimAvancuarContext context)
         {
             _context = context;
         }
 
-        // GET: api/Posts
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPost()
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-          if (_context.Post == null)
+          if (_context.User == null)
           {
               return NotFound();
           }
-            return await _context.Post.Include(p => p.Comments).Include(p => p.User).ToListAsync();
+            return await _context.User.ToListAsync();
         }
 
-        // GET: api/Posts/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> GetPost(Guid id)
+        public async Task<ActionResult<User>> GetUser(Guid id)
         {
-          if (_context.Post == null)
+          if (_context.User == null)
           {
               return NotFound();
           }
-            var post = await _context.Post.Include(p => p.Comments).FirstOrDefaultAsync(p => p.PostId == id);
+            var user = await _context.User.FindAsync(id);
 
-            if (post == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return post;
+            return user;
         }
 
-        // PUT: api/Posts/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(Guid id, Post post)
+        public async Task<IActionResult> PutUser(Guid id, User user)
         {
-            if (id != post.PostId)
+            if (id != user.UserId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(post).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -68,7 +68,7 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PostExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -81,44 +81,44 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             return NoContent();
         }
 
-        // POST: api/Posts
+        // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Post>> PostPost(Post post)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.Post == null)
+          if (_context.User == null)
           {
-              return Problem("Entity set 'ProjektiWebProgramimAvancuarContext.Post'  is null.");
+              return Problem("Entity set 'ProjektiWebProgramimAvancuarContext.User'  is null.");
           }
-            _context.Post.Add(post);
+            _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPost", new { id = post.PostId }, post);
+            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
-        // DELETE: api/Posts/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePost(Guid id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
-            if (_context.Post == null)
+            if (_context.User == null)
             {
                 return NotFound();
             }
-            var post = await _context.Post.FindAsync(id);
-            if (post == null)
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Post.Remove(post);
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PostExists(Guid id)
+        private bool UserExists(Guid id)
         {
-            return (_context.Post?.Any(e => e.PostId == id)).GetValueOrDefault();
+            return (_context.User?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
     }
 }
