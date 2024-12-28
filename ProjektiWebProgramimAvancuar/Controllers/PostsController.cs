@@ -133,7 +133,28 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             }
             return Ok(postbyuser);
 
+        }
 
+        [HttpPost("IncreaseViewCount/{id}")]
+
+        public async Task<ActionResult<Post>> IncreaseViewCount(Guid id)
+        {
+            if(_context.Post == null)
+            {
+                return Problem("Nuk ekziston tabela Post");
+            }
+
+            var post = await _context.Post.FindAsync(id);
+
+            if(post == null)
+            {
+                return NotFound("Nuk ekziston ky post");
+            }
+
+            post.ViewCount++;
+            await _context.SaveChangesAsync();
+
+            return Ok(post);
         }
         private bool PostExists(Guid id)
         {
