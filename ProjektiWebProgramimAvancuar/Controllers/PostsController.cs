@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProjektiWebProgramimAvancuar.Data;
 using ProjektiWebProgramimAvancuar.Models;
 
@@ -156,6 +159,60 @@ namespace ProjektiWebProgramimAvancuar.Controllers
 
             return Ok(post);
         }
+
+        [HttpGet("TopViewedPostsLastThreeMonths")]
+
+        //Declares an asynchronous function that returns a list of MonthlyPosts (class).
+        //It will contain data about the top 3 most-viewed posts for the last 3 months.
+        public async Task<ActionResult<IEnumerable<MonthlyPosts>>> GetTopViewedPostsLastThreeMonths()
+        {
+            //Checks if the Post table in the database is null (doesn't exist). If so it returns a message
+            if (_context.Post == null)
+            {
+                return Problem("Nuk ekziston tabela");
+            }
+
+            //Stores the current date and time in UTC format.
+            var currentDate = DateTime.UtcNow;
+            //Creates an empty list of MonthlyPosts that will hold the top 3 viewed posts for each of the last 3 months.
+            var results = new List<MonthlyPosts>();
+
+            //A loop that runs 3 times, once for each of the last 3 months.
+            for (int i = 0; i < 3; i++)
+            {
+                //Calculates the first day of the current month, then subtracts i months to get the first day of the respective month in the loop.
+                var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-i);
+                //Calculates the last day of the same month by adding one month to startOfMonth and subtracting one day.
+                var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+
+                // Get the top 3 viewed posts for the current month
+                //Queries the Post table to find posts created between startOfMonth and endOfMonth
+                var topPosts = await _context.Post
+
+                    .Where(p => p.CreatedAt >= startOfMonth && p.CreatedAt <= endOfMonth)// Filters posts within the month range.
+                    .OrderByDescending(p => p.ViewCount)//Orders the posts by ViewCount in descending order (highest views first).
+                    .Take(3)// Selects only the top 3 posts from the ordered list.
+                    .Select(p => new PostSummary//Creates a PostSummary object (only PostId and Title are selected for each post).  
+                    {
+                        //We assign the post values to the PostSummary properties
+                        PostId = p.PostId,
+                        Title = p.Title,
+                        ViewCount = p.ViewCount
+
+                    })
+            .ToListAsync();
+
+                //We add a new monthly posts object to the results list
+                results.Add(new MonthlyPosts
+                {
+                    Month = startOfMonth.ToString("MMMM yyyy"),
+                    Posts = topPosts
+                });
+            }
+
+            return Ok(results);
+        }
+
         private bool PostExists(Guid id)
         {
             return (_context.Post?.Any(e => e.PostId == id)).GetValueOrDefault();
