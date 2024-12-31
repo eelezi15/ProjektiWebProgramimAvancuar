@@ -1,4 +1,8 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AdsAPIDataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AdsAPIDataContext") ?? throw new InvalidOperationException("Connection string 'AdsAPIDataContext' not found.")));
 
 // Add services to the container.
 
