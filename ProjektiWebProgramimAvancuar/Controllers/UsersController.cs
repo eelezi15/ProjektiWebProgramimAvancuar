@@ -140,27 +140,7 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             });
         }
 
-        public async Task<ActionResult<User>> Signin([FromBody] Login login)
-        {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == login.Email && u.Password == login.Password);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(new
-            {
-                Message = "User registered successfully.",
-                User = new { user.UserId, user.Name, user.Email }
-
-            });
-        }
+       
         private bool UserExists(Guid id)
         {
             return (_context.User?.Any(e => e.UserId == id)).GetValueOrDefault();
