@@ -213,6 +213,24 @@ namespace ProjektiWebProgramimAvancuar.Controllers
             return Ok(results);
         }
 
+        [HttpGet("GetPostsBySearchText")]
+
+        public async Task<ActionResult<IEnumerable<Post>>> GetPostsBySearchText([FromQuery] string searchText)
+        {
+            if (_context.Post == null)
+            {
+                return Problem("Nuk ekziston tabela Post");
+            }
+
+            var posts = await _context.Post.Include(p => p.User).Include(p => p.Comments).Where(p => p.Title.Contains(searchText) || p.Content.Contains(searchText)).ToListAsync();
+
+            if (posts == null)
+            {
+                return NotFound("Nuk u gjet asgje");
+            }
+
+            return Ok(posts);
+        }
         private bool PostExists(Guid id)
         {
             return (_context.Post?.Any(e => e.PostId == id)).GetValueOrDefault();
