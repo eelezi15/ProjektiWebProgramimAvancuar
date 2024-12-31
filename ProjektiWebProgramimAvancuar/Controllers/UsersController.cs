@@ -134,7 +134,7 @@ namespace ProjektiWebProgramimAvancuar.Controllers
 
             return Ok(new
             {
-                Message = "User registered successfully.",
+                Message = "User signed in successfully.",
                 User = new { user.UserId, user.Name, user.Email }
 
             });
