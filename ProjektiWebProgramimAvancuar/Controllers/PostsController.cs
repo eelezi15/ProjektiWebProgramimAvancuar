@@ -43,7 +43,7 @@ namespace ProjektiWebProgramimAvancuar.Controllers
           {
               return NotFound();
           }
-            var post = await _context.Post.Include(p => p.Comments).FirstOrDefaultAsync(p => p.PostId == id);
+            var post = await _context.Post.Include(p => p.Comments).Include(p=>p.User).FirstOrDefaultAsync(p => p.PostId == id);
 
             if (post == null)
             {
